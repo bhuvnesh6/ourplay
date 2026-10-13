@@ -15,7 +15,7 @@ services:
 networks:
   proxy:
     external: true
-    name: YOUR_NPM_NETWORK
+    name: nginx-proxy
 
 volumes:
   ourplay-data:
