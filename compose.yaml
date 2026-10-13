@@ -1,0 +1,12 @@
+services:
+  ourplay:
+    build: .
+    container_name: ourplay
+    env_file: .env
+    ports:
+      - "127.0.0.1:4449:4449"   # only reachable by Nginx on the VPS, not the public internet
+    volumes:
+      - ourplay-data:/data      # SQLite DB survives restarts/rebuilds
+    restart: unless-stopped
+volumes:
+  ourplay-data:

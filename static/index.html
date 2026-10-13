@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>OurPlay ♡</title>
+<link rel="manifest" href="/static/manifest.webmanifest">
+<meta name="theme-color" content="#070b1f">
+<link rel="icon" href="/static/icon.svg">
+<style>
+:root{--bg:#070b1f;--glass:rgba(20,26,66,.62);--line:rgba(160,150,255,.25);--vio:#7c6cff;--pink:#ff7ac8;--tx:#f3f1ff;--mu:#a9a6d6}
+*{box-sizing:border-box}[hidden]{display:none!important}
+body{margin:0;min-height:100dvh;font-family:system-ui,'Segoe UI',sans-serif;color:var(--tx);
+background:radial-gradient(circle at 15% 0,#3a2a9a55,transparent 50%),radial-gradient(circle at 95% 100%,#8a2a7a44,transparent 45%),var(--bg)}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer;border:1px solid var(--line);background:rgba(124,108,255,.14);border-radius:999px;padding:9px 16px;transition:.2s}
+button:hover{background:rgba(124,108,255,.35)}button:disabled{opacity:.4;cursor:not-allowed}
+input{background:#0b1030;border:1px solid var(--line);border-radius:12px;padding:10px 12px;width:100%}
+.glass{background:var(--glass);border:1px solid var(--line);border-radius:20px;backdrop-filter:blur(8px);box-shadow:0 8px 30px #0006}
+.brand{font-size:1.6rem;font-weight:600;letter-spacing:.5px}.brand span{color:var(--pink)}.brand small{display:block;font-size:.7rem;color:var(--mu);font-weight:400}
+#lobby{max-width:380px;margin:12vh auto;padding:28px;display:grid;gap:14px;text-align:center}
+.primary{background:linear-gradient(90deg,#6f5cff,#a06bff);border:0;box-shadow:0 0 18px #7c6cff88;font-weight:600}
+#game{display:grid;grid-template-columns:210px minmax(0,1fr) 300px;grid-template-areas:"h h h" "l b c" "f f f";gap:14px;padding:14px;max-width:1200px;margin:auto}
+#h{grid-area:h;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 16px}
+#l{grid-area:l;padding:16px;display:grid;gap:12px;align-content:start;text-align:center}
+#b{grid-area:b;position:relative}#c{grid-area:c;display:flex;flex-direction:column;height:min(70vh,640px);padding:12px}
+#f{grid-area:f;display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.vs{display:flex;align-items:center;gap:10px;color:var(--mu)}
+.chip{display:flex;align-items:center;gap:8px;padding:5px 12px 5px 5px;border-radius:999px;border:1px solid transparent;color:var(--tx)}
+.chip.on{border-color:var(--pink);box-shadow:0 0 14px #ff7ac877}
+.av{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:#1c2268;font-style:normal;font-size:1.2rem;border:2px solid var(--vio)}
+.dot{width:8px;height:8px;border-radius:50%;background:#666}.dot.on{background:#4ade80}
+#turn{font-weight:600}
+#dice{font-size:5rem;line-height:1;filter:drop-shadow(0 0 14px #9b8cff);transition:transform .4s}#dice.r{transform:rotate(360deg) scale(1.15)}
+#moves{font-size:.78rem;color:var(--mu);text-align:left;max-height:120px;overflow:auto}
+#board{position:relative;width:min(100%,72vh);aspect-ratio:1;margin:auto;display:grid;grid-template-columns:repeat(15,1fr);grid-template-rows:repeat(15,1fr);
+border-radius:18px;overflow:hidden;box-shadow:0 0 40px #7c6cff66,0 0 0 6px #1b2060}
+#board div.k{position:relative}.p{background:#e8e4ff;box-shadow:inset 0 0 0 1px #5b57a8}
+.y0{background:#c0353f}.y1{background:#2457c9}.y2{background:#1f9a4c}.y3{background:#d9a514}
+.yi{box-shadow:inset 0 0 0 100px #0004}
+.l0{background:#e0505a}.l1{background:#4a7bf0}.l2{background:#3fc474}.l3{background:#f1c232}
+.st::after{content:'★';position:absolute;inset:0;display:grid;place-items:center;color:#7a6ad8;font-size:calc(min(100vw,72vh)/38)}
+.ctr{background:linear-gradient(135deg,#2a2090,#6b2f9f);color:#ff9ad8;display:grid;place-items:center;font-size:2.2vmin}
+.tk{position:absolute;width:6.667%;height:6.667%;display:grid;place-items:center;transition:left .35s,top .35s;z-index:3}
+.tk u{width:72%;height:72%;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fffb,var(--c) 55%);box-shadow:0 2px 6px #000a;pointer-events:none}
+.tk.can{cursor:pointer;z-index:4}.tk.can u{animation:pl .8s infinite alternate;outline:2px solid #fff}
+@keyframes pl{to{transform:scale(1.3)}}
+#wait{position:absolute;inset:0;display:grid;place-content:center;gap:10px;text-align:center;background:#070b1fdd;border-radius:18px;padding:20px;z-index:9}
+#msgs{flex:1;overflow:auto;display:flex;flex-direction:column;gap:6px;padding:8px 0}
+.m{max-width:80%;padding:7px 12px;border-radius:14px;background:#262d7a;align-self:flex-start;word-break:break-word}
+.m.me{align-self:flex-end;background:#5a46d8}.m small{display:block;font-size:.65rem;color:var(--mu)}
+#cf{display:flex;gap:6px}
+#banner{position:fixed;top:0;left:0;right:0;background:#b3263e;text-align:center;padding:6px;z-index:99}
+#vs{color:var(--mu);font-size:.85rem;align-self:center}
+dialog{background:#10163f;color:var(--tx);border:1px solid var(--line);border-radius:20px;padding:20px;width:min(92vw,360px)}
+dialog::backdrop{background:#000a}
+.av-pick{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}.av-pick button{font-size:1.4rem;padding:4px 10px}.av-pick .sel{background:var(--vio)}
+#toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#2a1f6e;padding:8px 16px;border-radius:999px;z-index:99}
+@media(max-width:860px){
+ #game{grid-template-columns:1fr;grid-template-areas:"h" "b" "l" "f";padding:8px;gap:10px}
+ #h .brand small,#h .vs>span{display:none}.chip b{font-size:.85rem}
+ #l{grid-template-columns:1fr auto;align-items:center;padding:10px 14px}#l #moves,#l h4{display:none}
+ #dice{font-size:3.4rem}
+ #c{position:fixed;left:0;right:0;bottom:0;height:62dvh;border-radius:22px 22px 0 0;z-index:50;transform:translateY(105%);transition:transform .3s}
+ #c.open{transform:none}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style></head><body>
+<div id="banner" hidden>Connection lost - reconnecting…</div>
+<div id="lobby" class="glass">
+ <div class="brand">OurPlay <span>♡</span><small>Just You &amp; Me</small></div>
+ <p id="lt" style="color:var(--mu);margin:0">Create a private room and invite your person.</p>
+ <input id="nm" maxlength="20" placeholder="Your name">
+ <button id="go" class="primary">Create room</button><div id="lerr" style="color:#ff8aa0"></div>
+</div>
+<div id="game" hidden>
+ <header id="h" class="glass"><div class="brand">OurPlay <span>♡</span><small>Just You &amp; Me</small></div>
+  <div class="vs" id="vsb"></div><div><button id="inst" hidden>Install</button> <button id="set" title="Settings">⚙</button></div></header>
+ <aside id="l" class="glass"><div><div id="turn"></div><div id="dice">⚀</div></div>
+  <div style="display:grid;gap:8px"><button id="roll" class="primary">Roll Dice</button></div><h4 style="margin:0;text-align:left">Moves</h4><div id="moves"></div></aside>
+ <main id="b"><div id="board"></div>
+  <div id="wait" hidden><div class="brand">Waiting for your partner…</div><input id="inv" readonly><button id="cp" class="primary">Copy invitation link</button></div></main>
+ <section id="c" class="glass"><div style="display:flex;justify-content:space-between"><b>Chat ♡</b><button id="cx" style="padding:2px 10px">✕</button></div>
+  <div id="msgs"></div><div id="cf"><input id="ci" maxlength="500" placeholder="Type a message…"><button id="cs" class="primary">➤</button></div></section>
+ <footer id="f"><button id="tc">💬 Chat <span id="un"></span></button><button id="em">😊 Emoji</button><button id="rx">♡ React</button>
+  <button id="vj">🎙 Join voice</button><button id="vm" hidden>Mute</button><button id="vl" hidden>Leave voice</button><span id="vs">Voice off</span>
+  <button id="nw">New game</button><button id="lv" style="border-color:#ff5a7a">Leave room</button></footer>
+</div>
+<dialog id="dlg"><b>Your profile</b><input id="pn" maxlength="20" placeholder="Display name" style="margin-top:10px"><div class="av-pick" id="ap"></div>
+ <div style="display:flex;gap:8px;justify-content:flex-end"><button id="pc">Cancel</button><button id="ps" class="primary">Save</button></div></dialog>
+<audio id="ra" autoplay playsinline></audio>
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+<script>
+const $=id=>document.getElementById(id),el=(t,c,x)=>{const e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e};
+const START=[0,13],SAFE=[0,8,13,21,26,34,39,47],COL=['#e03a48','#3a6df0'],FACE='⚀⚁⚂⚃⚄⚅';
+const AV=['🦊','🌸','🐻','🐱','🦋','🌙','⭐','🍓','🎧','👑','🐼','🦄'];
+let cfg={ice:[{urls:'stun:stun.l.google.com:19302'}]},sess=JSON.parse(localStorage.ourplay||'null'),sock,S,me=0,unread=0,lastKey='',selAv='';
+const q=new URLSearchParams(location.search).get('r');
+async function api(p,b){const r=await fetch(p,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)});const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error(j.error||'Something went wrong');return j}
+function toast(t){const d=el('div','',t);d.id='toast';document.body.append(d);setTimeout(()=>d.remove(),2500)}
+
+// ---- board geometry (15x15 grid) ----
+const PATH=[],seg=(r,c,dr,dc,n)=>{for(let k=0;k<n;k++)PATH.push([r+dr*k,c+dc*k])};
+seg(6,1,0,1,5);seg(5,6,-1,0,6);seg(0,7,0,1,2);seg(1,8,1,0,5);seg(6,9,0,1,6);seg(7,14,1,0,2);
+seg(8,13,0,-1,5);seg(9,8,1,0,6);seg(14,7,0,-1,2);seg(13,6,-1,0,5);seg(8,5,0,-1,6);seg(7,0,-1,0,2);
+const YARD=[[[2,2],[2,3],[3,2],[3,3]],[[2,11],[2,12],[3,11],[3,12]]];
+function pos(s,p,i){if(p<0)return YARD[s][i];if(p<=50)return PATH[(START[s]+p)%52];
+ if(p<56)return s?[p-50,7]:[7,p-50];const o=7+(i-1.5)*.2;return s?[6.1,o]:[o,6.1]}
+const cls={};const mark=(r,c,k)=>cls[r+','+c]=(cls[r+','+c]||'')+' '+k;
+for(let k=1;k<=5;k++){mark(7,k,'l0');mark(k,7,'l1');mark(7,14-k,'l3');mark(14-k,7,'l2')}
+[[0,0],[13,1],[26,3],[39,2]].forEach(([i,z])=>mark(...PATH[i],'l'+z));
+SAFE.forEach(i=>mark(...PATH[i],'st'));
+const board=$('board'),tks=[[],[]];
+for(let r=0;r<15;r++)for(let c=0;c<15;c++){const d=el('div','k');
+ const z=r<6&&c<6?0:r<6&&c>8?1:r>8&&c<6?2:r>8&&c>8?3:-1;
+ if(z>=0){d.className+=' y'+z;if(r%9>0&&r%9<5&&c%9>0&&c%9<5)d.className+=' yi'}
+ else if(r>5&&r<9&&c>5&&c<9){d.className+=' ctr';if(r==7&&c==7)d.textContent='♥'}
+ else d.className+=' p'+(cls[r+','+c]||'');
+ board.append(d)}
+for(let s=0;s<2;s++)for(let i=0;i<4;i++){const t=el('div','tk');t.style.setProperty('--c',COL[s]);t.append(el('u'));
+ t.onclick=()=>t.classList.contains('can')&&sock.emit('move',{i});tks[s].push(t);board.append(t)}
+
+// ---- render ----
+const nameOf=s=>S.players[s]?S.players[s].name:'Partner';
+function chip(i){const p=S.players[i],g=S.game,d=el('div','chip'+(g.turn===i&&g.status==='playing'&&S.players[1]?' on':''));
+ if(!p){d.textContent='Waiting…';return d}
+ const a=el('i','av',p.avatar);a.style.borderColor=COL[i];d.append(a,el('b','',p.name+(i===me?' (you)':'')),el('s','dot'+(p.online?' on':'')));return d}
+function render(){const g=S.game,two=!!S.players[1];
+ $('vsb').replaceChildren(chip(0),el('span','','vs'),chip(1));
+ $('wait').hidden=two;$('inv').value=location.origin+'/?r='+S.room;
+ const mine=g.turn===me&&g.status==='playing';
+ $('turn').textContent=g.status==='won'?(g.winner===me?'You won! 👑':nameOf(g.winner)+' won 👑'):mine?'Your turn ♛':nameOf(g.turn)+"'s turn";
+ const key=g.dice+':'+JSON.stringify(g.log.slice(-1));if(g.dice&&key!==lastKey){$('dice').textContent=FACE[g.dice-1];$('dice').classList.add('r');setTimeout(()=>$('dice').classList.remove('r'),400)}lastKey=key;
+ $('roll').disabled=!(mine&&!g.pending&&two);
+ for(let s=0;s<2;s++)g.tokens[s].forEach((p,i)=>{const t=tks[s][i],[r,c]=pos(s,p,i);t.style.left=c*100/15+'%';t.style.top=r*100/15+'%';
+  t.classList.toggle('can',s===me&&mine&&g.pending&&g.legal.includes(i))});
+ const T={roll:'rolled',skip:'rolled - no move',move:'moved',cap:'captured a token! 💥',home:'got a token home 🏠'};
+ $('moves').replaceChildren(...g.log.slice(-8).reverse().map(e=>el('div','',`${nameOf(e.s)} ${T[e.m]===undefined?'':e.m==='roll'||e.m==='skip'?T[e.m]+' '+e.d:T[e.m]}`)))}
+
+// ---- connection ----
+async function start(){$('lobby').hidden=true;$('game').hidden=false;
+ try{cfg=await (await fetch('/api/config')).json()}catch{}
+ sock=io({auth:cb=>cb(sess)});
+ sock.on('connect',()=>{$('banner').hidden=true;if(ms)sock.emit('voice_join')});
+ sock.on('disconnect',()=>$('banner').hidden=false);
+ sock.on('connect_error',()=>{if(!sock.active){localStorage.removeItem('ourplay');toast('Session invalid');setTimeout(()=>location.href='/',1200)}});
+ sock.on('you',s=>me=s);sock.on('state',s=>{S=s;render()});sock.on('err',toast);
+ sock.on('history',h=>{$('msgs').replaceChildren();h.forEach(addMsg)});
+ sock.on('chat',m=>{addMsg(m);if(!$('c').classList.contains('open')&&m.s!==me){unread++;$('un').textContent='('+unread+')'}});
+ voiceEvents()}
+function addMsg(m){const d=el('div','m'+(m.s===me?' me':''),m.t);d.append(el('small','',new Date(m.ts*1000).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})));
+ const b=$('msgs');b.append(d);b.scrollTop=b.scrollHeight}
+const send=t=>{t=t.trim();if(t)sock.emit('chat',{t})};
+$('cs').onclick=()=>{send($('ci').value);$('ci').value=''};$('ci').onkeydown=e=>{if(e.key==='Enter')$('cs').click()};
+const openChat=o=>{$('c').classList.toggle('open',o);if(o){unread=0;$('un').textContent=''}};
+$('tc').onclick=()=>openChat(!$('c').classList.contains('open'));$('cx').onclick=()=>openChat(false);
+if(matchMedia('(min-width:861px)').matches)$('c').classList.add('open');
+$('em').onclick=()=>{$('ci').value+='😊';openChat(true);$('ci').focus()};
+$('rx').onclick=()=>send(['❤️','😍','😂','🥰','👏'][Math.random()*5|0]);
+$('roll').onclick=()=>sock.emit('roll');$('nw').onclick=()=>confirm('Start a new game?')&&sock.emit('restart');
+$('lv').onclick=()=>{if(!confirm('Leave room? You can rejoin from your invite link only on this device.'))return;voiceLeave();localStorage.removeItem('ourplay');location.href='/'};
+$('cp').onclick=()=>navigator.clipboard.writeText($('inv').value).then(()=>toast('Link copied ♡'));
+
+// ---- lobby ----
+if(sess&&(!q||q===sess.room))start();else if(q){$('lt').textContent="You've been invited to a private room ♡";$('go').textContent='Join room'}
+$('go').onclick=async()=>{try{const j=q?await api('/api/rooms/join',{room:q,name:$('nm').value}):await api('/api/rooms',{name:$('nm').value});
+ sess={room:j.room,token:j.token};localStorage.ourplay=JSON.stringify(sess);history.replaceState(null,'','/');start()}catch(e){$('lerr').textContent=e.message}};
+
+// ---- settings ----
+$('set').onclick=()=>{const p=S.players[me];$('pn').value=p.name;selAv=p.avatar;
+ $('ap').replaceChildren(...AV.map(a=>{const b=el('button',a===selAv?'sel':'',a);b.onclick=()=>{selAv=a;[...$('ap').children].forEach(x=>x.classList.toggle('sel',x===b))};return b}));$('dlg').showModal()};
+$('pc').onclick=()=>$('dlg').close();$('ps').onclick=()=>{sock.emit('profile',{name:$('pn').value,avatar:selAv});$('dlg').close()};
+
+// ---- voice (WebRTC; Socket.IO only signals) ----
+let pc,ms,muted=false;const vs=t=>$('vs').textContent=t;
+function vui(){$('vj').hidden=!!ms;$('vm').hidden=$('vl').hidden=!ms;$('vm').textContent=muted?'🔇 Resume mic':'🎙 Mute'}
+function mkpc(){if(pc)pc.close();pc=new RTCPeerConnection({iceServers:cfg.ice});ms.getTracks().forEach(t=>pc.addTrack(t,ms));
+ pc.onicecandidate=e=>e.candidate&&sock.emit('sig',{c:e.candidate});pc.ontrack=e=>$('ra').srcObject=e.streams[0];
+ pc.onconnectionstatechange=()=>{const s=pc.connectionState;vs(s==='connected'?'🟢 Voice connected'+(muted?' (you are muted)':''):s==='failed'?'Voice failed - TURN may be needed':'Voice: '+s)}}
+async function voiceJoin(){if(ms)return;try{ms=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true}})}
+ catch(e){return toast('Microphone blocked - allow it in browser settings')}
+ muted=false;vs('Waiting for partner to join voice…');vui();sock.emit('voice_join')}
+function voiceLeave(){if(pc)pc.close();pc=null;if(ms)ms.getTracks().forEach(t=>t.stop());ms=null;$('ra').srcObject=null;vs('Voice off');vui();sock&&sock.emit('voice_leave')}
+async function toggleMute(){let t=ms.getAudioTracks()[0];
+ if(t.readyState==='ended'){try{const n=(await navigator.mediaDevices.getUserMedia({audio:true})).getAudioTracks()[0];
+  const snd=pc&&pc.getSenders().find(s=>s.track&&s.track.kind==='audio'||!s.track);if(snd)await snd.replaceTrack(n);ms.removeTrack(t);ms.addTrack(n);t=n;muted=false;vui();return}catch{return toast('Could not restart microphone')}}
+ muted=!muted;t.enabled=!muted;vui();if(pc&&pc.connectionState==='connected')vs('🟢 Voice connected'+(muted?' (you are muted)':''))}
+function voiceEvents(){
+ sock.on('voice_join',async()=>{if(!ms)return;mkpc();const o=await pc.createOffer();await pc.setLocalDescription(o);sock.emit('sig',{o:pc.localDescription})});
+ sock.on('voice_leave',()=>{if(pc){pc.close();pc=null}$('ra').srcObject=null;if(ms)vs('Partner left voice')});
+ sock.on('sig',async d=>{if(!ms)return;try{
+  if(d.o){mkpc();await pc.setRemoteDescription(d.o);const a=await pc.createAnswer();await pc.setLocalDescription(a);sock.emit('sig',{a:pc.localDescription})}
+  else if(d.a&&pc)await pc.setRemoteDescription(d.a);else if(d.c&&pc)await pc.addIceCandidate(d.c)}catch(e){console.warn(e)}})}
+$('vj').onclick=voiceJoin;$('vl').onclick=voiceLeave;$('vm').onclick=toggleMute;
+
+// ---- PWA ----
+if('serviceWorker'in navigator)navigator.serviceWorker.register('/sw.js');
+let dip;addEventListener('beforeinstallprompt',e=>{e.preventDefault();dip=e;if(!localStorage.noInst)$('inst').hidden=false});
+$('inst').onclick=async()=>{$('inst').hidden=true;localStorage.noInst=1;dip&&dip.prompt()};
+</script></body></html>
