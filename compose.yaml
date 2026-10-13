@@ -4,9 +4,18 @@ services:
     container_name: ourplay
     env_file: .env
     ports:
-      - "127.0.0.1:4449:4449"   # only reachable by Nginx on the VPS, not the public internet
+      - "127.0.0.1:4449:4449"
     volumes:
-      - ourplay-data:/data      # SQLite DB survives restarts/rebuilds
+      - ourplay-data:/data
     restart: unless-stopped
+    networks:
+      - default
+      - proxy
+
+networks:
+  proxy:
+    external: true
+    name: YOUR_NPM_NETWORK
+
 volumes:
   ourplay-data:
