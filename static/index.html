@@ -2,34 +2,46 @@
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>OurPlay ♡</title>
-<link rel="manifest" href="/static/manifest.webmanifest">
+<link id="mf" rel="manifest" href="/static/manifest.webmanifest">
 <meta name="theme-color" content="#070b1f">
 <link rel="icon" href="/static/icon.svg">
 <style>
 :root{--bg:#070b1f;--glass:rgba(20,26,66,.62);--line:rgba(160,150,255,.25);--vio:#7c6cff;--pink:#ff7ac8;--tx:#f3f1ff;--mu:#a9a6d6}
 *{box-sizing:border-box}[hidden]{display:none!important}
-body{margin:0;min-height:100dvh;font-family:system-ui,'Segoe UI',sans-serif;color:var(--tx);
-background:radial-gradient(circle at 15% 0,#3a2a9a55,transparent 50%),radial-gradient(circle at 95% 100%,#8a2a7a44,transparent 45%),var(--bg)}
+body{margin:0;min-height:100dvh;font-family:system-ui,'Segoe UI',sans-serif;color:var(--tx);background:var(--bg)}
+/* backgrounds: put your images in static/bg/laptop.png and static/bg/phone.png */
+body::before{content:'';position:fixed;inset:0;z-index:-1;background:linear-gradient(rgba(7,11,31,.35),rgba(7,11,31,.65)),url(/static/bg/laptop.png) center/cover no-repeat,radial-gradient(circle at 15% 0,#3a2a9a55,transparent 50%),var(--bg)}
+@media(max-width:860px){body::before{background:linear-gradient(rgba(7,11,31,.35),rgba(7,11,31,.65)),url(/static/bg/phone.png) center/cover no-repeat,radial-gradient(circle at 15% 0,#3a2a9a55,transparent 50%),var(--bg)}}
 button,input{font:inherit;color:inherit}
 button{cursor:pointer;border:1px solid var(--line);background:rgba(124,108,255,.14);border-radius:999px;padding:9px 16px;transition:.2s}
 button:hover{background:rgba(124,108,255,.35)}button:disabled{opacity:.4;cursor:not-allowed}
 input{background:#0b1030;border:1px solid var(--line);border-radius:12px;padding:10px 12px;width:100%}
 .glass{background:var(--glass);border:1px solid var(--line);border-radius:20px;backdrop-filter:blur(8px);box-shadow:0 8px 30px #0006}
 .brand{font-size:1.6rem;font-weight:600;letter-spacing:.5px}.brand span{color:var(--pink)}.brand small{display:block;font-size:.7rem;color:var(--mu);font-weight:400}
-#lobby{max-width:380px;margin:12vh auto;padding:28px;display:grid;gap:14px;text-align:center}
+#lobby{max-width:380px;margin:14vh auto;padding:28px;display:grid;gap:14px;text-align:center}
 .primary{background:linear-gradient(90deg,#6f5cff,#a06bff);border:0;box-shadow:0 0 18px #7c6cff88;font-weight:600}
 #game{display:grid;grid-template-columns:210px minmax(0,1fr) 300px;grid-template-areas:"h h h" "l b c" "f f f";gap:14px;padding:14px;max-width:1200px;margin:auto}
 #h{grid-area:h;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 16px}
 #l{grid-area:l;padding:16px;display:grid;gap:12px;align-content:start;text-align:center}
-#b{grid-area:b;position:relative}#c{grid-area:c;display:flex;flex-direction:column;height:min(70vh,640px);padding:12px}
-#f{grid-area:f;display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+#b{grid-area:b}#c{grid-area:c;display:flex;flex-direction:column;height:min(70vh,640px);padding:12px}
+#f{grid-area:f;display:flex;gap:8px;flex-wrap:wrap;justify-content:center;align-items:center}
 .vs{display:flex;align-items:center;gap:10px;color:var(--mu)}
 .chip{display:flex;align-items:center;gap:8px;padding:5px 12px 5px 5px;border-radius:999px;border:1px solid transparent;color:var(--tx)}
 .chip.on{border-color:var(--pink);box-shadow:0 0 14px #ff7ac877}
-.av{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:#1c2268;font-style:normal;font-size:1.2rem;border:2px solid var(--vio)}
+.av{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:#1c2268;font-style:normal;font-size:1.2rem;border:2px solid var(--vio);overflow:hidden;flex:none}
+.av img{width:100%;height:100%;object-fit:cover}
 .dot{width:8px;height:8px;border-radius:50%;background:#666}.dot.on{background:#4ade80}
-#turn{font-weight:600}
-#dice{font-size:5rem;line-height:1;filter:drop-shadow(0 0 14px #9b8cff);transition:transform .4s}#dice.r{transform:rotate(360deg) scale(1.15)}
+#turn{font-weight:600;min-height:1.4em}
+/* 3D dice */
+#dw{--s:84px;--h:calc(var(--s)/2);perspective:650px;height:calc(var(--s)*1.7);display:grid;place-items:center;filter:drop-shadow(0 0 14px #9b8cff)}
+#cube{width:var(--s);height:var(--s);position:relative;transform-style:preserve-3d;transition:transform 1.1s cubic-bezier(.2,.8,.2,1)}
+#cube.t{animation:toss 1.1s ease-out}
+@keyframes toss{40%{translate:0 -32px;scale:1.25}}
+.f{position:absolute;inset:0;border-radius:16%;background:linear-gradient(145deg,#fff,#cfc8ff);display:grid;grid:repeat(3,1fr)/repeat(3,1fr);padding:12%;box-shadow:inset 0 0 14px #8b7cff99}
+.f i.pp{background:radial-gradient(circle at 35% 30%,#7a6cff,#1a1450);border-radius:50%;width:85%;height:85%;place-self:center}
+.f1{transform:translateZ(var(--h))}.f6{transform:rotateY(180deg) translateZ(var(--h))}
+.f3{transform:rotateY(90deg) translateZ(var(--h))}.f4{transform:rotateY(-90deg) translateZ(var(--h))}
+.f2{transform:rotateX(90deg) translateZ(var(--h))}.f5{transform:rotateX(-90deg) translateZ(var(--h))}
 #moves{font-size:.78rem;color:var(--mu);text-align:left;max-height:120px;overflow:auto}
 #board{position:relative;width:min(100%,72vh);aspect-ratio:1;margin:auto;display:grid;grid-template-columns:repeat(15,1fr);grid-template-rows:repeat(15,1fr);
 border-radius:18px;overflow:hidden;box-shadow:0 0 40px #7c6cff66,0 0 0 6px #1b2060}
@@ -43,22 +55,28 @@ border-radius:18px;overflow:hidden;box-shadow:0 0 40px #7c6cff66,0 0 0 6px #1b20
 .tk u{width:72%;height:72%;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fffb,var(--c) 55%);box-shadow:0 2px 6px #000a;pointer-events:none}
 .tk.can{cursor:pointer;z-index:4}.tk.can u{animation:pl .8s infinite alternate;outline:2px solid #fff}
 @keyframes pl{to{transform:scale(1.3)}}
-#wait{position:absolute;inset:0;display:grid;place-content:center;gap:10px;text-align:center;background:#070b1fdd;border-radius:18px;padding:20px;z-index:9}
 #msgs{flex:1;overflow:auto;display:flex;flex-direction:column;gap:6px;padding:8px 0}
 .m{max-width:80%;padding:7px 12px;border-radius:14px;background:#262d7a;align-self:flex-start;word-break:break-word}
 .m.me{align-self:flex-end;background:#5a46d8}.m small{display:block;font-size:.65rem;color:var(--mu)}
 #cf{display:flex;gap:6px}
 #banner{position:fixed;top:0;left:0;right:0;background:#b3263e;text-align:center;padding:6px;z-index:99}
-#vs{color:var(--mu);font-size:.85rem;align-self:center}
+#vs{color:var(--mu);font-size:.85rem}
 dialog{background:#10163f;color:var(--tx);border:1px solid var(--line);border-radius:20px;padding:20px;width:min(92vw,360px)}
 dialog::backdrop{background:#000a}
 .av-pick{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}.av-pick button{font-size:1.4rem;padding:4px 10px}.av-pick .sel{background:var(--vio)}
 #toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#2a1f6e;padding:8px 16px;border-radius:999px;z-index:99}
+/* meme popups + fireworks */
+#pop{position:fixed;inset:0;display:grid;place-items:center;background:#0006;z-index:90;pointer-events:none}
+#pop.mod{pointer-events:auto;background:#000a}
+.pc{background:var(--glass);border:1px solid var(--pink);border-radius:22px;padding:16px;text-align:center;max-width:86vw;box-shadow:0 0 40px #ff7ac855;animation:pin .35s cubic-bezier(.2,1.4,.4,1);backdrop-filter:blur(10px);display:grid;gap:10px;justify-items:center}
+@keyframes pin{from{transform:scale(.5) rotate(-5deg);opacity:0}}
+#pi{max-height:38vh;max-width:76vw;border-radius:14px}#pt{font-size:1.15rem;font-weight:600}
+#fx{position:fixed;inset:0;z-index:80;pointer-events:none}
 @media(max-width:860px){
  #game{grid-template-columns:1fr;grid-template-areas:"h" "b" "l" "f";padding:8px;gap:10px}
  #h .brand small,#h .vs>span{display:none}.chip b{font-size:.85rem}
  #l{grid-template-columns:1fr auto;align-items:center;padding:10px 14px}#l #moves,#l h4{display:none}
- #dice{font-size:3.4rem}
+ #dw{--s:54px}
  #c{position:fixed;left:0;right:0;bottom:0;height:62dvh;border-radius:22px 22px 0 0;z-index:50;transform:translateY(105%);transition:transform .3s}
  #c.open{transform:none}
 }
@@ -67,17 +85,15 @@ dialog::backdrop{background:#000a}
 <div id="banner" hidden>Connection lost - reconnecting…</div>
 <div id="lobby" class="glass">
  <div class="brand">OurPlay <span>♡</span><small>Just You &amp; Me</small></div>
- <p id="lt" style="color:var(--mu);margin:0">Create a private room and invite your person.</p>
- <input id="nm" maxlength="20" placeholder="Your name">
- <button id="go" class="primary">Create room</button><div id="lerr" style="color:#ff8aa0"></div>
+ <p style="color:var(--mu);margin:0">Open your personal OurPlay link to come in ♡</p>
+ <a href="/setup" style="color:var(--mu);font-size:.8rem">Owner setup</a>
 </div>
 <div id="game" hidden>
  <header id="h" class="glass"><div class="brand">OurPlay <span>♡</span><small>Just You &amp; Me</small></div>
-  <div class="vs" id="vsb"></div><div><button id="inst" hidden>Install</button> <button id="set" title="Settings">⚙</button></div></header>
- <aside id="l" class="glass"><div><div id="turn"></div><div id="dice">⚀</div></div>
+  <div class="vs" id="vsb"></div><div><button id="snb" title="Sound">🔊</button> <button id="inst" hidden>Install</button> <button id="set" title="Settings">⚙</button></div></header>
+ <aside id="l" class="glass"><div><div id="turn"></div><div id="dw"><div id="cube"></div></div></div>
   <div style="display:grid;gap:8px"><button id="roll" class="primary">Roll Dice</button></div><h4 style="margin:0;text-align:left">Moves</h4><div id="moves"></div></aside>
- <main id="b"><div id="board"></div>
-  <div id="wait" hidden><div class="brand">Waiting for your partner…</div><input id="inv" readonly><button id="cp" class="primary">Copy invitation link</button></div></main>
+ <main id="b"><div id="board"></div></main>
  <section id="c" class="glass"><div style="display:flex;justify-content:space-between"><b>Chat ♡</b><button id="cx" style="padding:2px 10px">✕</button></div>
   <div id="msgs"></div><div id="cf"><input id="ci" maxlength="500" placeholder="Type a message…"><button id="cs" class="primary">➤</button></div></section>
  <footer id="f"><button id="tc">💬 Chat <span id="un"></span></button><button id="em">😊 Emoji</button><button id="rx">♡ React</button>
@@ -85,19 +101,48 @@ dialog::backdrop{background:#000a}
   <button id="nw">New game</button><button id="lv" style="border-color:#ff5a7a">Leave room</button></footer>
 </div>
 <dialog id="dlg"><b>Your profile</b><input id="pn" maxlength="20" placeholder="Display name" style="margin-top:10px"><div class="av-pick" id="ap"></div>
- <div style="display:flex;gap:8px;justify-content:flex-end"><button id="pc">Cancel</button><button id="ps" class="primary">Save</button></div></dialog>
+ <div style="display:flex;gap:8px;justify-content:flex-end"><button id="dc">Cancel</button><button id="ds" class="primary">Save</button></div></dialog>
+<div id="pop" hidden><div class="pc"><img id="pi" alt=""><div id="pt"></div><button id="pb" class="primary" hidden>Enter ♡</button></div></div>
+<canvas id="fx"></canvas>
 <audio id="ra" autoplay playsinline></audio>
 <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
 <script>
 const $=id=>document.getElementById(id),el=(t,c,x)=>{const e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e};
-const START=[0,13],SAFE=[0,8,13,21,26,34,39,47],COL=['#e03a48','#3a6df0'],FACE='⚀⚁⚂⚃⚄⚅';
+const START=[0,13],SAFE=[0,8,13,21,26,34,39,47],COL=['#e03a48','#3a6df0'];
 const AV=['🦊','🌸','🐻','🐱','🦋','🌙','⭐','🍓','🎧','👑','🐼','🦄'];
-let cfg={ice:[{urls:'stun:stun.l.google.com:19302'}]},sess=JSON.parse(localStorage.ourplay||'null'),sock,S,me=0,unread=0,lastKey='',selAv='';
-const q=new URLSearchParams(location.search).get('r');
-async function api(p,b){const r=await fetch(p,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)});const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error(j.error||'Something went wrong');return j}
+const M=location.pathname.match(/^\/p\/([0-9a-f]+)/);
+let cfg={ice:[{urls:'stun:stun.l.google.com:19302'}]},sess=M?{token:M[1]}:JSON.parse(localStorage.ourplay||'null'),sock,S,me=0,unread=0,selAv='';
+if(M){localStorage.ourplay=JSON.stringify(sess);$('mf').href=`/p/${M[1]}/manifest.webmanifest`}
 function toast(t){const d=el('div','',t);d.id='toast';document.body.append(d);setTimeout(()=>d.remove(),2500)}
 
-// ---- board geometry (15x15 grid) ----
+// ---- sound effects (synthesised with WebAudio - no files needed) ----
+let AC,mute=localStorage.mute==='1';
+const ac=()=>{if(!AC)AC=new(window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume();return AC};
+addEventListener('pointerdown',()=>{try{ac()}catch{}},{passive:true});
+function tone(f,d=.12,type='sine',v=.2,to=0,t0=0){if(mute)return;try{const a=ac(),o=a.createOscillator(),g=a.createGain(),t=a.currentTime+t0;
+ o.type=type;o.frequency.setValueAtTime(f,t);if(to)o.frequency.exponentialRampToValueAtTime(to,t+d);g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.001,t+d);
+ o.connect(g).connect(a.destination);o.start(t);o.stop(t+d+.02)}catch{}}
+function noise(d=.06,v=.25,t0=0,f=1800){if(mute)return;try{const a=ac(),n=Math.floor(a.sampleRate*d),b=a.createBuffer(1,n,a.sampleRate),x=b.getChannelData(0);
+ for(let i=0;i<n;i++)x[i]=(Math.random()*2-1)*(1-i/n);const s=a.createBufferSource(),fl=a.createBiquadFilter(),g=a.createGain();
+ fl.type='bandpass';fl.frequency.value=f;g.gain.value=v;s.buffer=b;s.connect(fl).connect(g).connect(a.destination);s.start(a.currentTime+t0)}catch{}}
+const SND={
+ click:()=>tone(660,.05,'triangle',.1),
+ roll:()=>{for(let i=0;i<9;i++)noise(.05,.3,i*.1+Math.random()*.03,800+Math.random()*2500);tone(90,.2,'sine',.35,45,.95)},
+ unlock:()=>[523,659,880].forEach((f,i)=>tone(f,.14,'triangle',.22,0,i*.07)),
+ move:n=>{for(let i=0;i<Math.min(n,6);i++)tone(440+i*30,.07,'square',.09,0,i*.09)},
+ cut:()=>{tone(320,.55,'sawtooth',.22,60);noise(.25,.35,.02,500);tone(200,.35,'square',.14,70,.3)},
+ home:()=>[523,659,784,1047].forEach((f,i)=>tone(f,.2,'triangle',.25,0,i*.1)),
+ win:()=>[523,659,784,1047,784,1047,1319,1568].forEach((f,i)=>tone(f,.28,'triangle',.28,0,i*.14)),
+ msg:()=>{tone(880,.08,'sine',.15);tone(1175,.12,'sine',.15,0,.08)},
+ turn:()=>tone(700,.16,'sine',.12,1000),
+ welcome:()=>[392,523,659,784].forEach((f,i)=>tone(f,.35,'sine',.2,0,i*.12)),
+ boom:()=>{noise(.5,.4,0,300);tone(120,.4,'sine',.3,40)}};
+const snd=(k,...a)=>SND[k](...a);
+const snb=()=>$('snb').textContent=mute?'🔇':'🔊';snb();
+$('snb').onclick=()=>{mute=!mute;localStorage.mute=mute?1:0;snb()};
+document.addEventListener('click',e=>{if(e.target.closest('button'))snd('click')});
+
+// ---- board (15x15) ----
 const PATH=[],seg=(r,c,dr,dc,n)=>{for(let k=0;k<n;k++)PATH.push([r+dr*k,c+dc*k])};
 seg(6,1,0,1,5);seg(5,6,-1,0,6);seg(0,7,0,1,2);seg(1,8,1,0,5);seg(6,9,0,1,6);seg(7,14,1,0,2);
 seg(8,13,0,-1,5);seg(9,8,1,0,6);seg(14,7,0,-1,2);seg(13,6,-1,0,5);seg(8,5,0,-1,6);seg(7,0,-1,0,2);
@@ -118,33 +163,69 @@ for(let r=0;r<15;r++)for(let c=0;c<15;c++){const d=el('div','k');
 for(let s=0;s<2;s++)for(let i=0;i<4;i++){const t=el('div','tk');t.style.setProperty('--c',COL[s]);t.append(el('u'));
  t.onclick=()=>t.classList.contains('can')&&sock.emit('move',{i});tks[s].push(t);board.append(t)}
 
-// ---- render ----
-const nameOf=s=>S.players[s]?S.players[s].name:'Partner';
-function chip(i){const p=S.players[i],g=S.game,d=el('div','chip'+(g.turn===i&&g.status==='playing'&&S.players[1]?' on':''));
- if(!p){d.textContent='Waiting…';return d}
- const a=el('i','av',p.avatar);a.style.borderColor=COL[i];d.append(a,el('b','',p.name+(i===me?' (you)':'')),el('s','dot'+(p.online?' on':'')));return d}
-function render(){const g=S.game,two=!!S.players[1];
+// ---- 3D dice ----
+const PIPS={1:[4],2:[0,8],3:[0,4,8],4:[0,2,6,8],5:[0,2,4,6,8],6:[0,2,3,5,6,8]},ROT={1:[0,0],6:[0,180],3:[0,-90],4:[0,90],2:[-90,0],5:[90,0]};
+for(let v=1;v<=6;v++){const f=el('div','f f'+v);for(let k=0;k<9;k++)f.append(el('i',PIPS[v].includes(k)?'pp':''));$('cube').append(f)}
+let sx=0,sy=0;
+function showDice(d,anim){const cu=$('cube'),[x,y]=ROT[d];
+ if(anim){sx+=360*(2+(Math.random()*2|0));sy+=360*(2+(Math.random()*2|0));cu.style.transition='';cu.classList.remove('t');void cu.offsetWidth;cu.classList.add('t')}
+ else cu.style.transition='none';
+ cu.style.transform=`rotateX(${x+sx}deg) rotateY(${y+sy}deg)`}
+
+// ---- popups + fireworks ----
+let pt;const hidePop=()=>$('pop').hidden=true;
+function pop(src,txt,ms,btn){clearTimeout(pt);const i=$('pi');i.hidden=false;i.src=src;$('pt').textContent=txt;$('pb').hidden=!btn;
+ $('pop').classList.toggle('mod',!!btn);$('pop').hidden=false;if(!btn)pt=setTimeout(hidePop,ms)}
+$('pi').onerror=()=>$('pi').hidden=true;$('pb').onclick=()=>{snd('welcome');hidePop()};
+const cv=$('fx'),cx=cv.getContext('2d');let FP=[],raf=0,fwEnd=0;
+function burst(x,y){const h=Math.random()*360;for(let i=0;i<60;i++){const a=Math.random()*6.283,s=1+Math.random()*5;FP.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,l:1,h:h+Math.random()*40})}}
+function loop(){cx.globalCompositeOperation='destination-out';cx.fillStyle='rgba(0,0,0,.18)';cx.fillRect(0,0,cv.width,cv.height);cx.globalCompositeOperation='lighter';
+ FP=FP.filter(p=>p.l>0);for(const p of FP){p.x+=p.vx;p.y+=p.vy;p.vy+=.06;p.vx*=.985;p.l-=.012;cx.fillStyle=`hsla(${p.h},100%,60%,${p.l})`;cx.fillRect(p.x,p.y,2.5,2.5)}
+ if(Date.now()<fwEnd||FP.length)raf=requestAnimationFrame(loop);else{cx.clearRect(0,0,cv.width,cv.height);raf=0}}
+function fireworks(){if(matchMedia('(prefers-reduced-motion:reduce)').matches)return;cv.width=innerWidth;cv.height=innerHeight;fwEnd=Date.now()+4500;
+ for(let i=0;i<8;i++)setTimeout(()=>{burst(cv.width*(.15+Math.random()*.7),cv.height*(.15+Math.random()*.4));snd('boom')},i*500);if(!raf)raf=requestAnimationFrame(loop)}
+
+// ---- render + game events ----
+const nameOf=s=>S.players[s].name;
+function avEl(p,i){const a=el('i','av');if(p.img){const m=new Image();m.src=`/avatar/${i}?v=${p.img}`;m.alt='';m.onerror=()=>{m.remove();a.textContent=p.avatar};a.append(m)}else a.textContent=p.avatar;a.style.borderColor=COL[i];return a}
+function chip(i){const p=S.players[i],g=S.game,d=el('div','chip'+(g.turn===i&&g.status==='playing'?' on':''));
+ d.append(avEl(p,i),el('b','',p.name+(i===me?' (you)':'')),el('s','dot'+(p.online?' on':'')));return d}
+function render(){const g=S.game,P=S.players,both=P[0].online&&P[1].online;
  $('vsb').replaceChildren(chip(0),el('span','','vs'),chip(1));
- $('wait').hidden=two;$('inv').value=location.origin+'/?r='+S.room;
  const mine=g.turn===me&&g.status==='playing';
- $('turn').textContent=g.status==='won'?(g.winner===me?'You won! 👑':nameOf(g.winner)+' won 👑'):mine?'Your turn ♛':nameOf(g.turn)+"'s turn";
- const key=g.dice+':'+JSON.stringify(g.log.slice(-1));if(g.dice&&key!==lastKey){$('dice').textContent=FACE[g.dice-1];$('dice').classList.add('r');setTimeout(()=>$('dice').classList.remove('r'),400)}lastKey=key;
- $('roll').disabled=!(mine&&!g.pending&&two);
+ $('turn').textContent=g.status==='won'?(g.winner===me?'You won! 👑':nameOf(g.winner)+' won 👑'):!both?`Waiting for ${P[1-me].name}…`:mine?'Your turn ♛':nameOf(g.turn)+"'s turn";
+ $('roll').disabled=!(mine&&!g.pending&&both);
  for(let s=0;s<2;s++)g.tokens[s].forEach((p,i)=>{const t=tks[s][i],[r,c]=pos(s,p,i);t.style.left=c*100/15+'%';t.style.top=r*100/15+'%';
   t.classList.toggle('can',s===me&&mine&&g.pending&&g.legal.includes(i))});
- const T={roll:'rolled',skip:'rolled - no move',move:'moved',cap:'captured a token! 💥',home:'got a token home 🏠'};
- $('moves').replaceChildren(...g.log.slice(-8).reverse().map(e=>el('div','',`${nameOf(e.s)} ${T[e.m]===undefined?'':e.m==='roll'||e.m==='skip'?T[e.m]+' '+e.d:T[e.m]}`)))}
+ const T={roll:'rolled',skip:'rolled - no move',unlock:'unlocked a token',move:'moved',cap:'cut a token 💥',home:'got a token home 🏠'};
+ $('moves').replaceChildren(...g.log.slice(-8).reverse().map(e=>el('div','',`${nameOf(e.s)} ${T[e.m]}${e.m==='roll'||e.m==='skip'?' '+e.d:''}`)))}
+let lastSeq=null,lastTurn=null,lastStatus=null,prevOn=[];
+function ev(e){const a=nameOf(e.s),b=nameOf(1-e.s);
+ if(e.m==='roll'||e.m==='skip'){showDice(e.d,true);snd('roll');if(e.m==='skip')setTimeout(()=>toast(`${a} rolled ${e.d} - no move`),1100)}
+ else if(e.m==='unlock')snd('unlock');
+ else if(e.m==='move')snd('move',e.d);
+ else if(e.m==='cap'){snd('move',e.d);setTimeout(()=>{snd('cut');pop('/static/memes/teas.png',`${a} cut ${b}'s token 😂`,2600)},350)}
+ else if(e.m==='home'){snd('move',e.d);setTimeout(()=>{snd('home');pop('/static/memes/celebrate.png',`${a} got a token home 🎉`,2600)},350)}}
+function events(first){const g=S.game,P=S.players;
+ if(first){showDice(g.dice||1,false);lastSeq=g.seq;pop('/static/memes/welcome.png',`Welcome, ${P[me].name} ♡`,0,true)}
+ else{
+  if(g.seq<lastSeq){lastSeq=g.seq;showDice(1,false)}
+  g.log.filter(e=>e.n>lastSeq).slice(-2).forEach(ev);lastSeq=g.seq;
+  if(g.status==='won'&&lastStatus==='playing')setTimeout(()=>{snd('win');pop('/static/memes/celebrate.png',`${nameOf(g.winner)} wins the game! 🏆`,6000);fireworks()},900);
+  if(g.status==='playing'&&g.turn===me&&lastTurn!==me)snd('turn');
+  if(P[1-me].online&&prevOn[1-me]===false){toast(`${P[1-me].name} joined ♡`);snd('msg')}}
+ lastTurn=g.turn;lastStatus=g.status;prevOn=P.map(p=>p.online)}
 
-// ---- connection ----
+// ---- connection + chat ----
 async function start(){$('lobby').hidden=true;$('game').hidden=false;
  try{cfg=await (await fetch('/api/config')).json()}catch{}
  sock=io({auth:cb=>cb(sess)});
  sock.on('connect',()=>{$('banner').hidden=true;if(ms)sock.emit('voice_join')});
  sock.on('disconnect',()=>$('banner').hidden=false);
- sock.on('connect_error',()=>{if(!sock.active){localStorage.removeItem('ourplay');toast('Session invalid');setTimeout(()=>location.href='/',1200)}});
- sock.on('you',s=>me=s);sock.on('state',s=>{S=s;render()});sock.on('err',toast);
+ sock.on('connect_error',()=>{if(!sock.active){localStorage.removeItem('ourplay');toast('This link is no longer valid');setTimeout(()=>location.href='/',1500)}});
+ sock.on('you',s=>me=s);sock.on('state',s=>{const first=!S;S=s;render();events(first)});sock.on('err',toast);
  sock.on('history',h=>{$('msgs').replaceChildren();h.forEach(addMsg)});
- sock.on('chat',m=>{addMsg(m);if(!$('c').classList.contains('open')&&m.s!==me){unread++;$('un').textContent='('+unread+')'}});
+ sock.on('chat',m=>{addMsg(m);if(m.s!==me){snd('msg');if(!$('c').classList.contains('open')){unread++;$('un').textContent='('+unread+')'}}});
  voiceEvents()}
 function addMsg(m){const d=el('div','m'+(m.s===me?' me':''),m.t);d.append(el('small','',new Date(m.ts*1000).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})));
  const b=$('msgs');b.append(d);b.scrollTop=b.scrollHeight}
@@ -156,36 +237,31 @@ if(matchMedia('(min-width:861px)').matches)$('c').classList.add('open');
 $('em').onclick=()=>{$('ci').value+='😊';openChat(true);$('ci').focus()};
 $('rx').onclick=()=>send(['❤️','😍','😂','🥰','👏'][Math.random()*5|0]);
 $('roll').onclick=()=>sock.emit('roll');$('nw').onclick=()=>confirm('Start a new game?')&&sock.emit('restart');
-$('lv').onclick=()=>{if(!confirm('Leave room? You can rejoin from your invite link only on this device.'))return;voiceLeave();localStorage.removeItem('ourplay');location.href='/'};
-$('cp').onclick=()=>navigator.clipboard.writeText($('inv').value).then(()=>toast('Link copied ♡'));
+$('lv').onclick=()=>{if(!confirm('Leave the room? Open your personal link to come back.'))return;voiceLeave();localStorage.removeItem('ourplay');location.href='/'};
+if(sess)start();
 
-// ---- lobby ----
-if(sess&&(!q||q===sess.room))start();else if(q){$('lt').textContent="You've been invited to a private room ♡";$('go').textContent='Join room'}
-$('go').onclick=async()=>{try{const j=q?await api('/api/rooms/join',{room:q,name:$('nm').value}):await api('/api/rooms',{name:$('nm').value});
- sess={room:j.room,token:j.token};localStorage.ourplay=JSON.stringify(sess);history.replaceState(null,'','/');start()}catch(e){$('lerr').textContent=e.message}};
-
-// ---- settings ----
-$('set').onclick=()=>{const p=S.players[me];$('pn').value=p.name;selAv=p.avatar;
- $('ap').replaceChildren(...AV.map(a=>{const b=el('button',a===selAv?'sel':'',a);b.onclick=()=>{selAv=a;[...$('ap').children].forEach(x=>x.classList.toggle('sel',x===b))};return b}));$('dlg').showModal()};
-$('pc').onclick=()=>$('dlg').close();$('ps').onclick=()=>{sock.emit('profile',{name:$('pn').value,avatar:selAv});$('dlg').close()};
+// ---- settings (own name / emoji) ----
+$('set').onclick=()=>{$('pn').value=S.players[me].name;selAv='';
+ $('ap').replaceChildren(...AV.map(a=>{const b=el('button','',a);b.onclick=()=>{selAv=a;[...$('ap').children].forEach(x=>x.classList.toggle('sel',x===b))};return b}));$('dlg').showModal()};
+$('dc').onclick=()=>$('dlg').close();$('ds').onclick=()=>{sock.emit('profile',{name:$('pn').value,avatar:selAv});$('dlg').close()};
 
 // ---- voice (WebRTC; Socket.IO only signals) ----
-let pc,ms,muted=false;const vs=t=>$('vs').textContent=t;
+let pc,ms,muted=false;const vsay=t=>$('vs').textContent=t;
 function vui(){$('vj').hidden=!!ms;$('vm').hidden=$('vl').hidden=!ms;$('vm').textContent=muted?'🔇 Resume mic':'🎙 Mute'}
 function mkpc(){if(pc)pc.close();pc=new RTCPeerConnection({iceServers:cfg.ice});ms.getTracks().forEach(t=>pc.addTrack(t,ms));
  pc.onicecandidate=e=>e.candidate&&sock.emit('sig',{c:e.candidate});pc.ontrack=e=>$('ra').srcObject=e.streams[0];
- pc.onconnectionstatechange=()=>{const s=pc.connectionState;vs(s==='connected'?'🟢 Voice connected'+(muted?' (you are muted)':''):s==='failed'?'Voice failed - TURN may be needed':'Voice: '+s)}}
+ pc.onconnectionstatechange=()=>{const s=pc.connectionState;vsay(s==='connected'?'🟢 Voice connected'+(muted?' (you are muted)':''):s==='failed'?'Voice failed - TURN may be needed':'Voice: '+s)}}
 async function voiceJoin(){if(ms)return;try{ms=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true}})}
  catch(e){return toast('Microphone blocked - allow it in browser settings')}
- muted=false;vs('Waiting for partner to join voice…');vui();sock.emit('voice_join')}
-function voiceLeave(){if(pc)pc.close();pc=null;if(ms)ms.getTracks().forEach(t=>t.stop());ms=null;$('ra').srcObject=null;vs('Voice off');vui();sock&&sock.emit('voice_leave')}
+ muted=false;vsay('Waiting for partner to join voice…');vui();sock.emit('voice_join')}
+function voiceLeave(){if(pc)pc.close();pc=null;if(ms)ms.getTracks().forEach(t=>t.stop());ms=null;$('ra').srcObject=null;vsay('Voice off');vui();sock&&sock.emit('voice_leave')}
 async function toggleMute(){let t=ms.getAudioTracks()[0];
  if(t.readyState==='ended'){try{const n=(await navigator.mediaDevices.getUserMedia({audio:true})).getAudioTracks()[0];
-  const snd=pc&&pc.getSenders().find(s=>s.track&&s.track.kind==='audio'||!s.track);if(snd)await snd.replaceTrack(n);ms.removeTrack(t);ms.addTrack(n);t=n;muted=false;vui();return}catch{return toast('Could not restart microphone')}}
- muted=!muted;t.enabled=!muted;vui();if(pc&&pc.connectionState==='connected')vs('🟢 Voice connected'+(muted?' (you are muted)':''))}
+  const snd_=pc&&pc.getSenders().find(s=>!s.track||s.track.kind==='audio');if(snd_)await snd_.replaceTrack(n);ms.removeTrack(t);ms.addTrack(n);t=n;muted=false;vui();return}catch{return toast('Could not restart microphone')}}
+ muted=!muted;t.enabled=!muted;vui();if(pc&&pc.connectionState==='connected')vsay('🟢 Voice connected'+(muted?' (you are muted)':''))}
 function voiceEvents(){
  sock.on('voice_join',async()=>{if(!ms)return;mkpc();const o=await pc.createOffer();await pc.setLocalDescription(o);sock.emit('sig',{o:pc.localDescription})});
- sock.on('voice_leave',()=>{if(pc){pc.close();pc=null}$('ra').srcObject=null;if(ms)vs('Partner left voice')});
+ sock.on('voice_leave',()=>{if(pc){pc.close();pc=null}$('ra').srcObject=null;if(ms)vsay('Partner left voice')});
  sock.on('sig',async d=>{if(!ms)return;try{
   if(d.o){mkpc();await pc.setRemoteDescription(d.o);const a=await pc.createAnswer();await pc.setLocalDescription(a);sock.emit('sig',{a:pc.localDescription})}
   else if(d.a&&pc)await pc.setRemoteDescription(d.a);else if(d.c&&pc)await pc.addIceCandidate(d.c)}catch(e){console.warn(e)}})}

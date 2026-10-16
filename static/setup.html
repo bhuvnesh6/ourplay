@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>OurPlay setup ♡</title><meta name="robots" content="noindex">
+<style>
+:root{--glass:rgba(20,26,66,.7);--line:rgba(160,150,255,.28);--vio:#7c6cff;--pink:#ff7ac8;--tx:#f3f1ff;--mu:#a9a6d6}
+*{box-sizing:border-box}body{margin:0;min-height:100dvh;font-family:system-ui,'Segoe UI',sans-serif;color:var(--tx);padding:18px;
+background:radial-gradient(circle at 15% 0,#3a2a9a66,transparent 50%),radial-gradient(circle at 95% 100%,#8a2a7a55,transparent 45%),#070b1f}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer;border:1px solid var(--line);background:rgba(124,108,255,.16);border-radius:999px;padding:8px 14px}
+button:hover{background:rgba(124,108,255,.4)}
+input{background:#0b1030;border:1px solid var(--line);border-radius:12px;padding:10px 12px;width:100%}
+.primary{background:linear-gradient(90deg,#6f5cff,#a06bff);border:0;font-weight:600}
+h1{margin:0 0 4px;font-weight:600}h1 span{color:var(--pink)}p.mu{color:var(--mu);margin:0 0 18px}
+#cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;max-width:900px;margin:auto}
+.card{background:var(--glass);border:1px solid var(--line);border-radius:20px;padding:18px;display:grid;gap:12px;box-shadow:0 8px 30px #0006}
+.top{display:flex;align-items:center;gap:14px}
+.av{width:72px;height:72px;border-radius:50%;display:grid;place-items:center;font-size:2.2rem;background:#1c2268;border:3px solid var(--vio);overflow:hidden;flex:none}
+.av img{width:100%;height:100%;object-fit:cover}
+.em{display:flex;flex-wrap:wrap;gap:6px}.em button{font-size:1.3rem;padding:3px 9px}
+.row{display:flex;gap:8px;flex-wrap:wrap}.lk{display:flex;gap:6px}.lk input{font-size:.8rem}
+small{color:var(--mu)}#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#2a1f6e;padding:8px 18px;border-radius:999px}
+</style></head><body>
+<h1 style="text-align:center">OurPlay <span>♡</span> Setup</h1>
+<p class="mu" style="text-align:center">Set both profiles. Each person gets one personal link - open it once on their device and they're in.</p>
+<div id="cards"></div>
+<script>
+const $=s=>document.querySelector(s),el=(t,c,x)=>{const e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e};
+const EM=['🦊','🌸','🐻','🐱','🦋','🌙','⭐','🍓','🎧','👑','🐼','🦄'];
+const toast=t=>{const d=el('div','',t);d.id='toast';document.body.append(d);setTimeout(()=>d.remove(),2200)};
+async function api(seat,body){const r=await fetch('/api/setup/'+seat,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+ const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error(j.error||'Failed');return j}
+const toData=f=>new Promise((ok,no)=>{const im=new Image();im.onload=()=>{const c=document.createElement('canvas');c.width=c.height=192;const s=Math.min(im.width,im.height);
+ c.getContext('2d').drawImage(im,(im.width-s)/2,(im.height-s)/2,s,s,0,0,192,192);ok(c.toDataURL('image/jpeg',.85))};im.onerror=no;im.src=URL.createObjectURL(f)});
+async function load(){const r=await fetch('/api/setup');if(!r.ok){document.body.textContent=await r.text();return}draw((await r.json()).players)}
+function draw(ps){const box=$('#cards');box.replaceChildren();
+ ps.forEach(p=>{const st={avatar:'',img:'',clear:false},c=el('div','card');
+  const prev=el('div','av'),show=()=>{prev.replaceChildren();
+   const u=st.img||(!st.clear&&!st.avatar&&p.img?`/avatar/${p.seat}?v=${p.img}`:'');
+   if(u){const i=new Image();i.src=u;prev.append(i)}else prev.textContent=st.avatar||p.avatar};show();
+  const name=el('input');name.value=p.name;name.maxLength=20;name.placeholder='Display name';
+  const top=el('div','top');const t=el('div');t.append(el('b','',`Player ${p.seat+1}`),el('br'),el('small','',p.seat?'blue tokens':'red tokens'));top.append(prev,t);
+  const em=el('div','em');EM.forEach(e=>{const b=el('button','',e);b.onclick=()=>{st.avatar=e;st.img='';show()};em.append(b)});
+  const file=el('input');file.type='file';file.accept='image/png,image/jpeg,image/webp';
+  file.onchange=async()=>{if(file.files[0])try{st.img=await toData(file.files[0]);st.avatar='';show()}catch{toast('Could not read that image')}};
+  const rm=el('button','','Remove photo');rm.onclick=()=>{st.clear=true;st.img='';show()};
+  const save=el('button','primary','Save');save.onclick=async()=>{const b={name:name.value};
+   if(st.img)b.img=st.img;else if(st.avatar)b.avatar=st.avatar;else if(st.clear)b.clearImg=true;
+   try{draw((await api(p.seat,b)).players);toast('Saved ✓')}catch(e){toast(e.message)}};
+  const lk=el('div','lk'),inp=el('input');inp.readOnly=true;inp.value=p.link;inp.onfocus=()=>inp.select();
+  const cp=el('button','','Copy');cp.onclick=()=>navigator.clipboard.writeText(p.link).then(()=>toast('Link copied ♡'),()=>{inp.select();toast('Press Ctrl+C')});lk.append(inp,cp);
+  const nl=el('button','','New link');nl.onclick=async()=>{if(confirm('Create a new link? The old link and that person\'s current login stop working.'))
+   try{draw((await api(p.seat,{regen:true})).players);toast('New link created')}catch(e){toast(e.message)}};
+  c.append(top,name,el('small','','Pick an emoji or upload a photo (cropped to a square)'),em,file,el('div','row'),save,
+   el('small','',`Personal link for ${p.name} - keep it private`),lk,nl);
+  c.children[5].append(rm);box.append(c)})}
+load();
+</script></body></html>

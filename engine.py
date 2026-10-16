@@ -15,7 +15,7 @@ HOME = 56
 
 def new_game():
     return {"tokens": [[-1] * 4, [-1] * 4], "turn": 0, "dice": None, "pending": False,
-            "legal": [], "status": "playing", "winner": None, "log": []}
+            "legal": [], "seq": 0, "status": "playing", "winner": None, "log": []}
 
 
 def legal_moves(g, seat, d):
@@ -23,6 +23,8 @@ def legal_moves(g, seat, d):
 
 
 def _log(g, **e):
+    g["seq"] += 1
+    e["n"] = g["seq"]
     g["log"] = (g["log"] + [e])[-30:]
 
 
@@ -50,7 +52,8 @@ def move(g, seat, i):
     if i not in g["legal"]:
         raise ValueError("That token can't move")
     d, t = g["dice"], g["tokens"][seat]
-    new = 0 if t[i] < 0 else t[i] + d
+    was = t[i]
+    new = 0 if was < 0 else was + d
     t[i] = new
     cap = False
     if new <= 50 and (START[seat] + new) % 52 not in SAFE:
@@ -59,7 +62,7 @@ def move(g, seat, i):
             if 0 <= q <= 50 and (START[1 - seat] + q) % 52 == a:
                 o[j], cap = -1, True
     g["pending"], g["legal"] = False, []
-    _log(g, s=seat, d=d, m="cap" if cap else "home" if new == HOME else "move")
+    _log(g, s=seat, d=d, m="cap" if cap else "home" if new == HOME else "unlock" if was < 0 else "move")
     if all(x == HOME for x in t):
         g["status"], g["winner"] = "won", seat
     elif not (d == 6 or cap or new == HOME):
