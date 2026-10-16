@@ -1,9 +1,12 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,interactive-widget=resizes-content">
 <title>OurPlay ♡</title>
 <link id="mf" rel="manifest" href="/static/manifest.webmanifest">
 <meta name="theme-color" content="#070b1f">
+<meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="OurPlay">
+<link rel="apple-touch-icon" href="/static/icon-192.png">
 <link rel="icon" href="/static/icon.svg">
 <style>
 :root{--bg:#070b1f;--glass:rgba(20,26,66,.62);--line:rgba(160,150,255,.25);--vio:#7c6cff;--pink:#ff7ac8;--tx:#f3f1ff;--mu:#a9a6d6}
@@ -43,14 +46,14 @@ input{background:#0b1030;border:1px solid var(--line);border-radius:12px;padding
 .f3{transform:rotateY(90deg) translateZ(var(--h))}.f4{transform:rotateY(-90deg) translateZ(var(--h))}
 .f2{transform:rotateX(90deg) translateZ(var(--h))}.f5{transform:rotateX(-90deg) translateZ(var(--h))}
 #moves{font-size:.78rem;color:var(--mu);text-align:left;max-height:120px;overflow:auto}
-#board{position:relative;width:min(100%,72vh);aspect-ratio:1;margin:auto;display:grid;grid-template-columns:repeat(15,1fr);grid-template-rows:repeat(15,1fr);
+#board{container-type:inline-size;position:relative;width:min(100%,72vh);aspect-ratio:1;margin:auto;display:grid;grid-template-columns:repeat(15,1fr);grid-template-rows:repeat(15,1fr);
 border-radius:18px;overflow:hidden;box-shadow:0 0 40px #7c6cff66,0 0 0 6px #1b2060}
 #board div.k{position:relative}.p{background:#e8e4ff;box-shadow:inset 0 0 0 1px #5b57a8}
 .y0{background:#c0353f}.y1{background:#2457c9}.y2{background:#1f9a4c}.y3{background:#d9a514}
 .yi{box-shadow:inset 0 0 0 100px #0004}
 .l0{background:#e0505a}.l1{background:#4a7bf0}.l2{background:#3fc474}.l3{background:#f1c232}
-.st::after{content:'★';position:absolute;inset:0;display:grid;place-items:center;color:#7a6ad8;font-size:calc(min(100vw,72vh)/38)}
-.ctr{background:linear-gradient(135deg,#2a2090,#6b2f9f);color:#ff9ad8;display:grid;place-items:center;font-size:2.2vmin}
+.st::after{content:'★';position:absolute;inset:0;display:grid;place-items:center;color:#7a6ad8;font-size:calc(100cqw/38)}
+.ctr{background:linear-gradient(135deg,#2a2090,#6b2f9f);color:#ff9ad8;display:grid;place-items:center;font-size:calc(100cqw/28)}
 .tk{position:absolute;width:6.667%;height:6.667%;display:grid;place-items:center;transition:left .35s,top .35s;z-index:3}
 .tk u{width:72%;height:72%;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fffb,var(--c) 55%);box-shadow:0 2px 6px #000a;pointer-events:none}
 .tk.can{cursor:pointer;z-index:4}.tk.can u{animation:pl .8s infinite alternate;outline:2px solid #fff}
@@ -72,13 +75,52 @@ dialog::backdrop{background:#000a}
 @keyframes pin{from{transform:scale(.5) rotate(-5deg);opacity:0}}
 #pi{max-height:38vh;max-width:76vw;border-radius:14px}#pt{font-size:1.15rem;font-weight:600}
 #fx{position:fixed;inset:0;z-index:80;pointer-events:none}
-@media(max-width:860px){
- #game{grid-template-columns:1fr;grid-template-areas:"h" "b" "l" "f";padding:8px;gap:10px}
- #h .brand small,#h .vs>span{display:none}.chip b{font-size:.85rem}
- #l{grid-template-columns:1fr auto;align-items:center;padding:10px 14px}#l #moves,#l h4{display:none}
- #dw{--s:54px}
- #c{position:fixed;left:0;right:0;bottom:0;height:62dvh;border-radius:22px 22px 0 0;z-index:50;transform:translateY(105%);transition:transform .3s}
+html{overflow-x:hidden;-webkit-text-size-adjust:100%}
+body{-webkit-tap-highlight-color:transparent;overscroll-behavior:none;touch-action:manipulation;-webkit-user-select:none;user-select:none}
+input,#msgs,.m{-webkit-user-select:text;user-select:text}
+button:active{transform:scale(.95)}
+.mo{display:none}.dmo{gap:8px;margin:4px 0 14px}.dmo button{flex:1}
+/* incoming-message popup (top right) */
+#nt{position:fixed;top:calc(env(safe-area-inset-top,0px) + 10px);right:10px;z-index:95;display:grid;gap:8px;width:min(88vw,320px);pointer-events:none}
+.nt{pointer-events:auto;display:flex;gap:10px;align-items:center;background:rgba(24,30,80,.94);border:1px solid var(--pink);border-radius:16px;padding:10px 12px;box-shadow:0 8px 24px #000a;animation:nin .3s;cursor:pointer}
+.nt>div{min-width:0}.nt>div>div{font-size:.9rem;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;word-break:break-word}
+.nt.out{opacity:0;transform:translateX(24px);transition:.4s}
+@keyframes nin{from{transform:translateX(30px);opacity:0}}
+/* phone / small windows: native-app layout that always fits the screen */
+@media(max-width:860px),(max-height:520px){
+ html,body{height:100%;overflow:hidden}
+ input{font-size:16px}
+ #game{height:100dvh;display:flex;flex-direction:column;gap:8px;max-width:none;margin:0;
+  padding:calc(env(safe-area-inset-top,0px) + 6px) calc(env(safe-area-inset-right,0px) + 8px) calc(env(safe-area-inset-bottom,0px) + 8px) calc(env(safe-area-inset-left,0px) + 8px)}
+ #h{display:grid;grid-template-columns:auto minmax(0,1fr) auto;padding:6px 10px;gap:8px;border-radius:16px;flex:none}
+ #h .brand{font-size:1.05rem}#h .brand small,#h .vs>span,.dk{display:none}
+ #h button{padding:6px 10px}
+ .vs{justify-content:center;gap:4px;min-width:0}
+ .chip{min-width:0;padding:3px 9px 3px 3px;gap:6px}
+ .chip b{font-size:.8rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:22vw}
+ .av{width:28px;height:28px;font-size:1rem}
+ #h{order:0}#b{order:1}#l{order:2}#f{order:3}
+ #b{flex:1;min-height:0;container-type:size;display:grid;place-items:center}
+ #board{width:min(100cqw,100cqh)}
+ #l{display:flex;align-items:center;gap:10px;padding:8px 12px;text-align:left;flex:none}
+ #l>div:first-child{display:flex;align-items:center;gap:12px;flex:1;min-width:0}
+ #l h4,#moves{display:none}
+ #dw{--s:46px;order:-1;height:68px;width:68px;flex:none}
+ #turn{font-size:.95rem}
+ #f{flex:none;gap:6px;flex-wrap:wrap}
+ #f>button{flex:1 1 0;min-width:0;padding:11px 2px;font-size:.8rem;white-space:nowrap;border-radius:14px}
+ #vs{order:-1;flex:1 0 100%;text-align:center;font-size:.72rem}
+ #nw,#lv{display:none}.mo{display:flex}
+ #c{position:fixed;left:0;right:0;bottom:0;height:70dvh;border-radius:22px 22px 0 0;z-index:50;transform:translateY(105%);transition:transform .3s;
+  padding-bottom:calc(env(safe-area-inset-bottom,0px) + 10px);background:rgba(16,22,64,.97)}
  #c.open{transform:none}
+ #toast{bottom:calc(env(safe-area-inset-bottom,0px) + 90px)}
+}
+@media(max-height:520px) and (min-width:600px){  /* phone held sideways */
+ #game{display:grid;grid-template-columns:minmax(0,1fr) 250px;grid-template-rows:auto minmax(0,1fr) auto;grid-template-areas:"h h" "b l" "b f";gap:8px}
+ #l{flex-wrap:wrap;align-self:start}#l>div:first-child{flex:1 1 100%}#l>div:nth-child(2){flex:1 1 100%}#roll{width:100%}
+ #f{align-self:end}#f>button{flex:1 1 28%}
+ #c{left:auto;width:min(420px,70vw);height:88dvh}
 }
 @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style></head><body>
@@ -97,12 +139,14 @@ dialog::backdrop{background:#000a}
  <section id="c" class="glass"><div style="display:flex;justify-content:space-between"><b>Chat ♡</b><button id="cx" style="padding:2px 10px">✕</button></div>
   <div id="msgs"></div><div id="cf"><input id="ci" maxlength="500" placeholder="Type a message…"><button id="cs" class="primary">➤</button></div></section>
  <footer id="f"><button id="tc">💬 Chat <span id="un"></span></button><button id="em">😊 Emoji</button><button id="rx">♡ React</button>
-  <button id="vj">🎙 Join voice</button><button id="vm" hidden>Mute</button><button id="vl" hidden>Leave voice</button><span id="vs">Voice off</span>
+  <button id="vj">🎙 Join<span class="dk"> voice</span></button><button id="vm" hidden>🎙 Mute</button><button id="vl" hidden>📴 Leave<span class="dk"> voice</span></button><span id="vs">Connecting…</span>
   <button id="nw">New game</button><button id="lv" style="border-color:#ff5a7a">Leave room</button></footer>
 </div>
 <dialog id="dlg"><b>Your profile</b><input id="pn" maxlength="20" placeholder="Display name" style="margin-top:10px"><div class="av-pick" id="ap"></div>
+ <div class="mo dmo"><button id="dnw">New game</button><button id="dlv" style="border-color:#ff5a7a">Leave room</button></div>
  <div style="display:flex;gap:8px;justify-content:flex-end"><button id="dc">Cancel</button><button id="ds" class="primary">Save</button></div></dialog>
 <div id="pop" hidden><div class="pc"><img id="pi" alt=""><div id="pt"></div><button id="pb" class="primary" hidden>Enter ♡</button></div></div>
+<div id="nt"></div>
 <canvas id="fx"></canvas>
 <audio id="ra" autoplay playsinline></audio>
 <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
@@ -110,6 +154,7 @@ dialog::backdrop{background:#000a}
 const $=id=>document.getElementById(id),el=(t,c,x)=>{const e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e};
 const START=[0,13],SAFE=[0,8,13,21,26,34,39,47],COL=['#e03a48','#3a6df0'];
 const AV=['🦊','🌸','🐻','🐱','🦋','🌙','⭐','🍓','🎧','👑','🐼','🦄'];
+const COMPACT='(max-width:860px),(max-height:520px)',vib=p=>navigator.vibrate&&navigator.vibrate(p);
 const M=location.pathname.match(/^\/p\/([0-9a-f]+)/);
 let cfg={ice:[{urls:'stun:stun.l.google.com:19302'}]},sess=M?{token:M[1]}:JSON.parse(localStorage.ourplay||'null'),sock,S,me=0,unread=0,selAv='';
 if(M){localStorage.ourplay=JSON.stringify(sess);$('mf').href=`/p/${M[1]}/manifest.webmanifest`}
@@ -189,7 +234,7 @@ function fireworks(){if(matchMedia('(prefers-reduced-motion:reduce)').matches)re
 const nameOf=s=>S.players[s].name;
 function avEl(p,i){const a=el('i','av');if(p.img){const m=new Image();m.src=`/avatar/${i}?v=${p.img}`;m.alt='';m.onerror=()=>{m.remove();a.textContent=p.avatar};a.append(m)}else a.textContent=p.avatar;a.style.borderColor=COL[i];return a}
 function chip(i){const p=S.players[i],g=S.game,d=el('div','chip'+(g.turn===i&&g.status==='playing'?' on':''));
- d.append(avEl(p,i),el('b','',p.name+(i===me?' (you)':'')),el('s','dot'+(p.online?' on':'')));return d}
+ const b=el('b','',p.name);if(i===me)b.append(el('small','dk',' (you)'));d.append(avEl(p,i),b,el('s','dot'+(p.online?' on':'')));return d}
 function render(){const g=S.game,P=S.players,both=P[0].online&&P[1].online;
  $('vsb').replaceChildren(chip(0),el('span','','vs'),chip(1));
  const mine=g.turn===me&&g.status==='playing';
@@ -201,10 +246,10 @@ function render(){const g=S.game,P=S.players,both=P[0].online&&P[1].online;
  $('moves').replaceChildren(...g.log.slice(-8).reverse().map(e=>el('div','',`${nameOf(e.s)} ${T[e.m]}${e.m==='roll'||e.m==='skip'?' '+e.d:''}`)))}
 let lastSeq=null,lastTurn=null,lastStatus=null,prevOn=[];
 function ev(e){const a=nameOf(e.s),b=nameOf(1-e.s);
- if(e.m==='roll'||e.m==='skip'){showDice(e.d,true);snd('roll');if(e.m==='skip')setTimeout(()=>toast(`${a} rolled ${e.d} - no move`),1100)}
+ if(e.m==='roll'||e.m==='skip'){showDice(e.d,true);snd('roll');vib(25);if(e.m==='skip')setTimeout(()=>toast(`${a} rolled ${e.d} - no move`),1100)}
  else if(e.m==='unlock')snd('unlock');
  else if(e.m==='move')snd('move',e.d);
- else if(e.m==='cap'){snd('move',e.d);setTimeout(()=>{snd('cut');pop('/static/memes/teas.png',`${a} cut ${b}'s token 😂`,2600)},350)}
+ else if(e.m==='cap'){snd('move',e.d);setTimeout(()=>{snd('cut');vib([60,40,60]);pop('/static/memes/teas.png',`${a} cut ${b}'s token 😂`,2600)},350)}
  else if(e.m==='home'){snd('move',e.d);setTimeout(()=>{snd('home');pop('/static/memes/celebrate.png',`${a} got a token home 🎉`,2600)},350)}}
 function events(first){const g=S.game,P=S.players;
  if(first){showDice(g.dice||1,false);lastSeq=g.seq;pop('/static/memes/welcome.png',`Welcome, ${P[me].name} ♡`,0,true)}
@@ -213,6 +258,7 @@ function events(first){const g=S.game,P=S.players;
   g.log.filter(e=>e.n>lastSeq).slice(-2).forEach(ev);lastSeq=g.seq;
   if(g.status==='won'&&lastStatus==='playing')setTimeout(()=>{snd('win');pop('/static/memes/celebrate.png',`${nameOf(g.winner)} wins the game! 🏆`,6000);fireworks()},900);
   if(g.status==='playing'&&g.turn===me&&lastTurn!==me)snd('turn');
+  if(!P[1-me].online&&prevOn[1-me])closePc();
   if(P[1-me].online&&prevOn[1-me]===false){toast(`${P[1-me].name} joined ♡`);snd('msg')}}
  lastTurn=g.turn;lastStatus=g.status;prevOn=P.map(p=>p.online)}
 
@@ -220,20 +266,24 @@ function events(first){const g=S.game,P=S.players;
 async function start(){$('lobby').hidden=true;$('game').hidden=false;
  try{cfg=await (await fetch('/api/config')).json()}catch{}
  sock=io({auth:cb=>cb(sess)});
- sock.on('connect',()=>{$('banner').hidden=true;if(ms)sock.emit('voice_join')});
+ sock.on('connect',()=>{$('banner').hidden=true;closePc();wantOffer=true});
  sock.on('disconnect',()=>$('banner').hidden=false);
  sock.on('connect_error',()=>{if(!sock.active){localStorage.removeItem('ourplay');toast('This link is no longer valid');setTimeout(()=>location.href='/',1500)}});
- sock.on('you',s=>me=s);sock.on('state',s=>{const first=!S;S=s;render();events(first)});sock.on('err',toast);
+ sock.on('you',s=>me=s);sock.on('state',s=>{const first=!S;S=s;render();events(first);if(me===0&&wantOffer){wantOffer=false;if(partnerOn())offer()}vui()});sock.on('err',toast);sock.on('peer',()=>{if(me===0)offer()});
  sock.on('history',h=>{$('msgs').replaceChildren();h.forEach(addMsg)});
- sock.on('chat',m=>{addMsg(m);if(m.s!==me){snd('msg');if(!$('c').classList.contains('open')){unread++;$('un').textContent='('+unread+')'}}});
+ sock.on('chat',m=>{addMsg(m);if(m.s!==me){snd('msg');const open=$('c').classList.contains('open');
+ if(!(open&&matchMedia(COMPACT).matches))notify(m);if(!open){unread++;$('un').textContent='('+unread+')'}}});
  voiceEvents()}
+function notify(m){const p=S.players[m.s],d=el('div','nt'),b=el('div');b.append(el('b','',p.name),el('div','',m.t));d.append(avEl(p,m.s),b);
+ d.onclick=()=>{openChat(true);d.remove()};const n=$('nt');n.append(d);while(n.children.length>3)n.firstChild.remove();
+ setTimeout(()=>d.classList.add('out'),4200);setTimeout(()=>d.remove(),4700);vib(40)}
 function addMsg(m){const d=el('div','m'+(m.s===me?' me':''),m.t);d.append(el('small','',new Date(m.ts*1000).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})));
  const b=$('msgs');b.append(d);b.scrollTop=b.scrollHeight}
 const send=t=>{t=t.trim();if(t)sock.emit('chat',{t})};
 $('cs').onclick=()=>{send($('ci').value);$('ci').value=''};$('ci').onkeydown=e=>{if(e.key==='Enter')$('cs').click()};
 const openChat=o=>{$('c').classList.toggle('open',o);if(o){unread=0;$('un').textContent=''}};
 $('tc').onclick=()=>openChat(!$('c').classList.contains('open'));$('cx').onclick=()=>openChat(false);
-if(matchMedia('(min-width:861px)').matches)$('c').classList.add('open');
+if(!matchMedia(COMPACT).matches)$('c').classList.add('open');
 $('em').onclick=()=>{$('ci').value+='😊';openChat(true);$('ci').focus()};
 $('rx').onclick=()=>send(['❤️','😍','😂','🥰','👏'][Math.random()*5|0]);
 $('roll').onclick=()=>sock.emit('roll');$('nw').onclick=()=>confirm('Start a new game?')&&sock.emit('restart');
@@ -243,28 +293,41 @@ if(sess)start();
 // ---- settings (own name / emoji) ----
 $('set').onclick=()=>{$('pn').value=S.players[me].name;selAv='';
  $('ap').replaceChildren(...AV.map(a=>{const b=el('button','',a);b.onclick=()=>{selAv=a;[...$('ap').children].forEach(x=>x.classList.toggle('sel',x===b))};return b}));$('dlg').showModal()};
-$('dc').onclick=()=>$('dlg').close();$('ds').onclick=()=>{sock.emit('profile',{name:$('pn').value,avatar:selAv});$('dlg').close()};
+$('dc').onclick=()=>$('dlg').close();$('dnw').onclick=()=>{$('dlg').close();$('nw').click()};$('dlv').onclick=()=>{$('dlg').close();$('lv').click()};$('ds').onclick=()=>{sock.emit('profile',{name:$('pn').value,avatar:selAv});$('dlg').close()};
 
-// ---- voice (WebRTC; Socket.IO only signals) ----
-let pc,ms,muted=false;const vsay=t=>$('vs').textContent=t;
-function vui(){$('vj').hidden=!!ms;$('vm').hidden=$('vl').hidden=!ms;$('vm').textContent=muted?'🔇 Resume mic':'🎙 Mute'}
-function mkpc(){if(pc)pc.close();pc=new RTCPeerConnection({iceServers:cfg.ice});ms.getTracks().forEach(t=>pc.addTrack(t,ms));
- pc.onicecandidate=e=>e.candidate&&sock.emit('sig',{c:e.candidate});pc.ontrack=e=>$('ra').srcObject=e.streams[0];
- pc.onconnectionstatechange=()=>{const s=pc.connectionState;vsay(s==='connected'?'🟢 Voice connected'+(muted?' (you are muted)':''):s==='failed'?'Voice failed - TURN may be needed':'Voice: '+s)}}
+// ---- voice: a listening link stays open between you two; the mic is only used after you press Join ----
+let pc,ms,muted=false,pv={on:false,muted:false},needTap=false,wantOffer=false,pend=[];
+const partnerOn=()=>!!S&&S.players[1-me].online,sender=()=>pc&&pc.getSenders()[0];
+function vsay(){$('vs').textContent=!partnerOn()?'Partner is offline':!pc||pc.connectionState!=='connected'?'Connecting audio…':
+ (ms?(muted?'🔇 You are muted':'🟢 You are live'):'🎧 Listening')+(pv.on?(pv.muted?' · partner muted':' · partner is live'):' · partner not on mic')}
+function vui(){$('vj').hidden=!!ms;$('vm').hidden=$('vl').hidden=!ms;$('vm').textContent=muted?'🔇 Unmute':'🎙 Mute';vsay()}
+const sendVs=()=>sock&&sock.emit('sig',{vs:{on:!!ms,muted}});
+function attach(){const s=sender();if(s)s.replaceTrack(ms?ms.getAudioTracks()[0]:null).catch(()=>{})}
+function closePc(){if(pc){pc.close();pc=null}pend=[];$('ra').srcObject=null;pv={on:false,muted:false};vsay()}
+function mkpc(offerer){if(pc)pc.close();pend=[];const p=pc=new RTCPeerConnection({iceServers:cfg.ice});
+ if(offerer){p.addTransceiver('audio',{direction:'sendrecv'});attach()}
+ p.onicecandidate=e=>e.candidate&&sock.emit('sig',{c:e.candidate});
+ p.ontrack=e=>{const a=$('ra');a.srcObject=e.streams[0]||new MediaStream([e.track]);a.play().catch(()=>{if(!needTap){needTap=true;toast('Tap anywhere to turn on voice sound')}})};
+ p.onconnectionstatechange=()=>{if(pc!==p)return;const st=p.connectionState;if(st==='connected'){attach();sendVs()}
+  if(st==='failed'){if(me===0)setTimeout(offer,800);else sock.emit('sig',{need:1})}vsay()};
+ return p}
+async function offer(){if(!partnerOn())return;const p=mkpc(true),o=await p.createOffer();await p.setLocalDescription(o);sock.emit('sig',{o:p.localDescription})}
 async function voiceJoin(){if(ms)return;try{ms=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true}})}
  catch(e){return toast('Microphone blocked - allow it in browser settings')}
- muted=false;vsay('Waiting for partner to join voice…');vui();sock.emit('voice_join')}
-function voiceLeave(){if(pc)pc.close();pc=null;if(ms)ms.getTracks().forEach(t=>t.stop());ms=null;$('ra').srcObject=null;vsay('Voice off');vui();sock&&sock.emit('voice_leave')}
-async function toggleMute(){let t=ms.getAudioTracks()[0];
- if(t.readyState==='ended'){try{const n=(await navigator.mediaDevices.getUserMedia({audio:true})).getAudioTracks()[0];
-  const snd_=pc&&pc.getSenders().find(s=>!s.track||s.track.kind==='audio');if(snd_)await snd_.replaceTrack(n);ms.removeTrack(t);ms.addTrack(n);t=n;muted=false;vui();return}catch{return toast('Could not restart microphone')}}
- muted=!muted;t.enabled=!muted;vui();if(pc&&pc.connectionState==='connected')vsay('🟢 Voice connected'+(muted?' (you are muted)':''))}
-function voiceEvents(){
- sock.on('voice_join',async()=>{if(!ms)return;mkpc();const o=await pc.createOffer();await pc.setLocalDescription(o);sock.emit('sig',{o:pc.localDescription})});
- sock.on('voice_leave',()=>{if(pc){pc.close();pc=null}$('ra').srcObject=null;if(ms)vsay('Partner left voice')});
- sock.on('sig',async d=>{if(!ms)return;try{
-  if(d.o){mkpc();await pc.setRemoteDescription(d.o);const a=await pc.createAnswer();await pc.setLocalDescription(a);sock.emit('sig',{a:pc.localDescription})}
-  else if(d.a&&pc)await pc.setRemoteDescription(d.a);else if(d.c&&pc)await pc.addIceCandidate(d.c)}catch(e){console.warn(e)}})}
+ muted=false;attach();vui();sendVs()}
+function voiceLeave(){if(ms){ms.getTracks().forEach(t=>t.stop());ms=null}attach();vui();sendVs()}
+async function toggleMute(){const t=ms.getAudioTracks()[0];
+ if(t.readyState==='ended'){try{ms=await navigator.mediaDevices.getUserMedia({audio:true});muted=false;attach();vui();sendVs()}catch{toast('Could not restart microphone')}return}
+ muted=!muted;t.enabled=!muted;vui();sendVs()}
+const flush=async()=>{while(pend.length&&pc&&pc.remoteDescription)try{await pc.addIceCandidate(pend.shift())}catch{}};
+function voiceEvents(){sock.on('sig',async d=>{try{
+ if(d.vs){pv=d.vs;vsay()}
+ else if(d.need){if(me===0)offer()}
+ else if(d.o){const p=mkpc(false);await p.setRemoteDescription(d.o);p.getTransceivers().forEach(t=>t.direction='sendrecv');attach();
+  const a=await p.createAnswer();await p.setLocalDescription(a);sock.emit('sig',{a:p.localDescription});flush()}
+ else if(d.a&&pc){await pc.setRemoteDescription(d.a);flush()}
+ else if(d.c){pend.push(d.c);flush()}}catch(e){console.warn(e)}})}
+addEventListener('pointerdown',()=>{const a=$('ra');if(a.srcObject&&a.paused)a.play().catch(()=>{})},{passive:true});
 $('vj').onclick=voiceJoin;$('vl').onclick=voiceLeave;$('vm').onclick=toggleMute;
 
 // ---- PWA ----

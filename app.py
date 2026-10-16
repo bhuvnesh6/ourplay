@@ -235,6 +235,7 @@ def on_connect(auth):
         sess[request.sid] = seat
         online.setdefault((ROOM, seat), set()).add(request.sid)
         join_room(ROOM)
+        emit("peer", {}, to=ROOM, include_self=False)  # tells the other player to (re)start the audio link
         emit("you", seat)
         emit("history", room["chat"][-100:])
         push(room)
@@ -247,7 +248,6 @@ def on_disc(*_):
         if seat is not None:
             online.get((ROOM, seat), set()).discard(request.sid)
             push(load())
-            sio.emit("voice_leave", {}, to=ROOM)
 
 
 def act(fn):
@@ -317,7 +317,7 @@ def relay(ev):
     return w
 
 
-for ev in ("voice_join", "voice_leave", "sig"):
+for ev in ("sig",):
     sio.on_event(ev, relay(ev))
 
 if __name__ == "__main__":  # local dev only

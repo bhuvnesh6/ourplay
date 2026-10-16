@@ -75,7 +75,8 @@ docker compose stop ourplay && docker compose cp ./backup-YYYY-MM-DD.db ourplay:
 
 1. Open your personal link (from `/setup`) on your laptop; she opens hers on her phone.
 2. ⚙ in-game lets each player change their own name/emoji (synced live); photos are set in `/setup`.
-4. 🎙 **Join voice** (both players) → **Mute / Resume** only toggles your mic; the call stays up. **Leave voice** ends it.
+4. Voice: an audio link opens automatically between you two (no mic used). Press 🎙 **Join voice** to start talking - the other person hears you right away even if they haven't joined voice (they only need the page open; on phones one tap anywhere enables sound). They can join voice to talk back. **Mute/Unmute** only toggles your mic; **Leave** turns your mic off.
+5. New messages pop up top-right on the other person's screen (tap it to open chat).
 5. Phones: browser menu → *Add to Home Screen* / *Install* for the PWA.
 
 ## 6. Rules implemented

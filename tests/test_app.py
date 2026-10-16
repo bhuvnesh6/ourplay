@@ -16,10 +16,11 @@ def test_setup_links_profiles_and_game():
     assert c.get("/p/"+t[0]).status_code==200 and c.get("/p/nope").status_code==404
     s0=A.sio.test_client(A.app,auth={"token":t[0]}); s1=A.sio.test_client(A.app,auth={"token":t[1]})
     assert not A.sio.test_client(A.app,auth={"token":"bad"}).is_connected()
-    s0.get_received(); s0.emit("roll"); st=[e for e in s0.get_received() if e["name"]=="state"][-1]["args"][0]
+    assert any(e["name"]=="peer" for e in s0.get_received()); s0.emit("roll"); st=[e for e in s0.get_received() if e["name"]=="state"][-1]["args"][0]
     assert st["game"]["dice"] in range(1,7) and st["game"]["log"][-1]["n"]==st["game"]["seq"]
     wrong=s1 if st["game"]["turn"]==0 else s0   # whoever's turn it is NOT
     wrong.get_received(); wrong.emit("roll"); assert any(e["name"]=="err" for e in wrong.get_received())
+    s0.emit("sig",{"vs":{"on":True}}); assert any(e["name"]=="sig" for e in s1.get_received())
     s0.emit("chat",{"t":"hi"}); assert any(e["name"]=="chat" for e in s1.get_received())
     # regenerating a link revokes the old one
     c.post("/api/setup/1",json={"regen":True},headers=H); assert c.get("/p/"+t[1]).status_code==404
